@@ -52,9 +52,9 @@ namespace WebResourcesTest.Controllers
             {                
                 memoryCache.TryGetValue("resources", out List<string> listResources);
                 if(listResources == null)
-                {
                     listResources = new();
-                }
+                if (valueResources == null)
+                    return "Ресурс не добавлен! Не было указано значение.";
                 listResources.Add(valueResources);
                 memoryCache.Set("resources", listResources);
                 return "Ресурс добавлен";
@@ -74,9 +74,7 @@ namespace WebResourcesTest.Controllers
             {
                 memoryCache.TryGetValue("resources", out List<string> listResources);
                 if (listResources == null)
-                {
                     return "Нет ресурсов для изменения";
-                }
                 int counter = 0;
                 for (int i = 0; i < listResources.Count; i++)
                 {
@@ -107,9 +105,7 @@ namespace WebResourcesTest.Controllers
             {
                 memoryCache.TryGetValue("resources", out List<string> listResources);
                 if (listResources == null)
-                {
                     return "Нет ресурсов для удаления";
-                }
                 listResources.RemoveAt(id);
                 return $"Ресурс под номером {id} удален.";
             }
