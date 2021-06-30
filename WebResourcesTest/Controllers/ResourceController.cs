@@ -20,9 +20,19 @@ namespace WebResourcesTest.Controllers
 
         // GET: Получить список всех ресурсов
         [HttpGet]
-        public string GetResources()
+        public object GetResources()
         {
-            return "OK";
+            List<string> cacheResources = new();
+            bool existResources = memoryCache.TryGetValue("resources", out object listResources);
+            if(!existResources)
+            {
+                listResources = (object)cacheResources;
+                return listResources; 
+            }
+            else
+            {
+                return listResources;
+            }                       
         }
 
         // POST: Создать ресурс (с возможностью предоставить начальное значение)
@@ -55,7 +65,7 @@ namespace WebResourcesTest.Controllers
             }
         }
 
-        // GET: ResourceController/Delete/5
+        // GET: Удалить ресурс по id
         public ActionResult Delete(int id)
         {
             return View();
