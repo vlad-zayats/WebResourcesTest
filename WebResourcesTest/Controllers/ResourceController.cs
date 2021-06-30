@@ -22,17 +22,25 @@ namespace WebResourcesTest.Controllers
         [HttpGet]
         public List<string> GetResources()
         {
-            List<string> cacheResources = new();
-            bool existResources = memoryCache.TryGetValue("resources", out List<string> listResources);
-            if(!existResources)
+            try
             {
-                listResources = (List<string>)cacheResources;
-                return listResources; 
+                List<string> cacheResources = new();
+                bool existResources = memoryCache.TryGetValue("resources", out List<string> listResources);
+                if (!existResources)
+                {
+                    listResources = (List<string>)cacheResources;
+                    return listResources;
+                }
+                else
+                {
+                    return listResources;
+                }
             }
-            else
+            catch(Exception ex)
             {
-                return listResources;
-            }                       
+                List<string> message = new() {ex.Message};
+                return message;
+            }
         }
 
         // POST: Создать ресурс (с возможностью предоставить начальное значение)
@@ -90,10 +98,25 @@ namespace WebResourcesTest.Controllers
             }
         }
 
-        ////GET: Удалить ресурс по id
-        //public ActionResult Delete(int id)
-        //{
-        //    return View();
-        //}
+        //GET: Удалить ресурс по id
+        [HttpPost]
+        [Route("Resource/Delete")]
+        public string Delete(int id)
+        {
+            try
+            {
+                memoryCache.TryGetValue("resources", out List<string> listResources);
+                if (listResources == null)
+                {
+                    return "Нет ресурсов для удаления";
+                }
+                listResources.RemoveAt(id);
+                return $"Ресурс под номером {id} удален.";
+            }
+            catch(Exception ex)
+            {
+                return ex.Message;
+            }
+        }
     }
 }
