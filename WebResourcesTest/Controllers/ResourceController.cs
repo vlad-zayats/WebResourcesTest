@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,12 +8,21 @@ using System.Threading.Tasks;
 
 namespace WebResourcesTest.Controllers
 {
+    [Route("Resource/Resources")]
     public class ResourceController : Controller
     {
-        // GET: Получить список всех ресурсов
-        public ActionResult Index()
+        private IMemoryCache memoryCache;
+
+        public ResourceController(IMemoryCache memoryCache)
         {
-            return View();
+            this.memoryCache = memoryCache;
+        }
+
+        // GET: Получить список всех ресурсов
+        [HttpGet]
+        public string GetResources()
+        {
+            return "OK";
         }
 
         // POST: Создать ресурс (с возможностью предоставить начальное значение)
@@ -22,7 +32,7 @@ namespace WebResourcesTest.Controllers
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(GetResources));
             }
             catch
             {
@@ -37,7 +47,7 @@ namespace WebResourcesTest.Controllers
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(GetResources));
             }
             catch
             {
