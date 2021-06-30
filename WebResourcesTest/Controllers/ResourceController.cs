@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace WebResourcesTest.Controllers
 {
-    [Route("Resource/GetResources")]
     public class ResourceController : Controller
     {
         private IMemoryCache memoryCache;
@@ -19,6 +18,7 @@ namespace WebResourcesTest.Controllers
         }
 
         // GET: Получить список всех ресурсов
+        [Route("Resource/GetResources")]
         [HttpGet]
         public List<string> GetResources()
         {
@@ -37,7 +37,8 @@ namespace WebResourcesTest.Controllers
 
         // POST: Создать ресурс (с возможностью предоставить начальное значение)
         [HttpPost]
-        public bool Create(string valueResources)
+        [Route("Resource/Create")]
+        public string Create(string valueResources)
         {
             try
             {                
@@ -48,29 +49,48 @@ namespace WebResourcesTest.Controllers
                 }
                 listResources.Add(valueResources);
                 memoryCache.Set("resources", listResources);
-                return true;
+                return "Ресурс добавлен";
             }
             catch
             {
-                return false;
+                return "Ошибка! Ресурс не добавлен.";
             }
         }
 
-        //// post: перезаписать ресурс
-        //[httppost]
-        //public actionresult edit(int id, iformcollection collection)
-        //{
-        //    try
-        //    {
-        //        return redirecttoaction(nameof(getresources));
-        //    }
-        //    catch
-        //    {
-        //        return view();
-        //    }
-        //}
+        //post: перезаписать ресурс
+        [HttpPost]
+        [Route("Resource/Edit")]
+        public string Edit(int id, string valueResources)
+        {
+            try
+            {
+                memoryCache.TryGetValue("resources", out List<string> listResources);
+                if (listResources == null)
+                {
+                    return "Нет ресурсов для изменения";
+                }
+                int counter = 0;
+                for (int i = 0; i < listResources.Count; i++)
+                {
+                    if (i == id)
+                    {
+                        listResources[id] = valueResources;
+                        counter += 1;
+                    }
+                }
+                memoryCache.Set("resources", listResources);
+                if (counter == 1)
+                    return $"Ресурс под номером {id} изменен на {valueResources}.";
+                else
+                    return $"Ресурс под номером {id} не существует.";
+            }
+            catch
+            {
+                return "Ошибка! Ресурс не найден или значение не верно";
+            }
+        }
 
-        // GET: Удалить ресурс по id
+        ////GET: Удалить ресурс по id
         //public ActionResult Delete(int id)
         //{
         //    return View();
