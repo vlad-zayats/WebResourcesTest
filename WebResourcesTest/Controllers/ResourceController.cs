@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace WebResourcesTest.Controllers
 {
-    [Route("Resource/Resources")]
+    [Route("Resource/GetResources")]
     public class ResourceController : Controller
     {
         private IMemoryCache memoryCache;
@@ -20,13 +20,13 @@ namespace WebResourcesTest.Controllers
 
         // GET: Получить список всех ресурсов
         [HttpGet]
-        public object GetResources()
+        public List<string> GetResources()
         {
             List<string> cacheResources = new();
-            bool existResources = memoryCache.TryGetValue("resources", out object listResources);
+            bool existResources = memoryCache.TryGetValue("resources", out List<string> listResources);
             if(!existResources)
             {
-                listResources = (object)cacheResources;
+                listResources = (List<string>)cacheResources;
                 return listResources; 
             }
             else
@@ -37,38 +37,43 @@ namespace WebResourcesTest.Controllers
 
         // POST: Создать ресурс (с возможностью предоставить начальное значение)
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public bool Create(string valueResources)
         {
             try
-            {
-                return RedirectToAction(nameof(GetResources));
+            {                
+                memoryCache.TryGetValue("resources", out List<string> listResources);
+                if(listResources == null)
+                {
+                    listResources = new();
+                }
+                listResources.Add(valueResources);
+                memoryCache.Set("resources", listResources);
+                return true;
             }
             catch
             {
-                return View();
+                return false;
             }
         }
 
-        // POST: Перезаписать ресурс
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(GetResources));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+        //// post: перезаписать ресурс
+        //[httppost]
+        //public actionresult edit(int id, iformcollection collection)
+        //{
+        //    try
+        //    {
+        //        return redirecttoaction(nameof(getresources));
+        //    }
+        //    catch
+        //    {
+        //        return view();
+        //    }
+        //}
 
         // GET: Удалить ресурс по id
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
+        //public ActionResult Delete(int id)
+        //{
+        //    return View();
+        //}
     }
 }
