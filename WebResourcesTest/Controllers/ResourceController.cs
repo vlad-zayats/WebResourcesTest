@@ -1,10 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebResourcesTest.Controllers
 {
@@ -96,7 +93,7 @@ namespace WebResourcesTest.Controllers
             }
         }
 
-        //GET: Удалить ресурс по id
+        //Post: Удалить ресурс по id
         [HttpPost]
         [Route("Resource/Delete")]
         public string Delete(int id)
